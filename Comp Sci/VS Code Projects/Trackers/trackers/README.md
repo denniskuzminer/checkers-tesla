@@ -1,0 +1,5 @@
+- Make sure npm is installed
+- cd into trackers
+- run npm install
+- run npm start
+- go to localhost:3000
