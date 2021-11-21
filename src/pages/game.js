@@ -16,6 +16,8 @@ const styles = (theme) => ({
 
 const Game = (props) => {
   const { classes } = props;
+  const [whiteMove, setWhiteMove] = useState(true);
+  const [captured, setCaptured] = useState([0, 0]);
   let history = useHistory();
   let location = useLocation();
   let state = location.state;
@@ -25,8 +27,21 @@ const Game = (props) => {
   return (
     <div className={classes.root} id="root">
       <div className={classes.boardContainer} id="boardContainer">
-        <Board />
-        <Typography variant="h2"></Typography>
+        <Board
+          whiteMove={whiteMove}
+          setWhiteMove={setWhiteMove}
+          captured={captured}
+          setCaptured={setCaptured}
+        />
+        <Typography variant="h2">
+          {whiteMove ? "It's white's move" : "It's black's move"}
+        </Typography>
+        <Typography variant="h2">
+          {"White has taken: " + captured[0]}
+        </Typography>
+        <Typography variant="h2">
+          {"Black has taken: " + captured[1]}
+        </Typography>
       </div>
     </div>
   );

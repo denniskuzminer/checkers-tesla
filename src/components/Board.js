@@ -21,7 +21,7 @@ const Board = (props) => {
   const [board, setBoard] = useState(
     [...Array(sqNum)].map((x) => [...Array(sqNum)])
   );
-  const { classes } = props;
+  const { classes, whiteMove, setWhiteMove, captured, setCaptured } = props;
 
   useEffect(() => {
     let boardIndex = [...Array(sqNum)].map((x) => [...Array(sqNum)]);
@@ -55,7 +55,16 @@ const Board = (props) => {
             {board.map((e, i) => (
               <tr>
                 {board.map((e, j) => (
-                  <Square i={i} j={j} board={board} setBoard={setBoard} />
+                  <Square
+                    i={i}
+                    j={j}
+                    board={board}
+                    setBoard={setBoard}
+                    whiteMove={whiteMove}
+                    setWhiteMove={setWhiteMove}
+                    captured={captured}
+                    setCaptured={setCaptured}
+                  />
                 ))}
               </tr>
             ))}

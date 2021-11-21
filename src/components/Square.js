@@ -21,17 +21,41 @@ const Square = (props) => {
       move(item, i, j);
     },
   });
-  const { classes, i, j, board, setBoard } = props;
+  const {
+    classes,
+    i,
+    j,
+    board,
+    setBoard,
+    whiteMove,
+    setWhiteMove,
+    captured,
+    setCaptured,
+  } = props;
 
   const move = (fromItem, toi, toj) => {
-    let [fromi, fromj, color] = fromItem.id.split("_");
-    fromItem.id = `${toi}_${toj}_${color}`;
     let newBoard = Array.from(board);
-    newBoard[fromi][fromj] = "E";
-    newBoard[toi][toj] = color;
-    setBoard(newBoard);
-    console.log(toi + " " + toj);
-    console.log(fromi + " " + fromj);
+    if (newBoard[toi][toj] === "M") {
+      let [fromi, fromj, color] = fromItem.id.split("_");
+      fromItem.id = `${toi}_${toj}_${color}`;
+      newBoard[fromi][fromj] = "E";
+      newBoard[toi][toj] = color;
+      if (Math.abs(fromi - toi) === 2) {
+        newBoard[(Number(fromi) + Number(toi)) / 2][
+          (Number(fromj) + Number(toj)) / 2
+        ] = "E";
+        setCaptured((prev) =>
+          whiteMove ? [captured[0] + 1, prev[1]] : [prev[0], captured[1] + 1]
+        );
+      }
+      newBoard.forEach((a) => {
+        for (let i = 0; i < a.length; i++) {
+          a[i] = a[i] === "M" ? "E" : a[i]; // cleanUp
+        }
+      });
+      setBoard(newBoard);
+      setWhiteMove(!whiteMove);
+    }
   };
 
   return (
@@ -54,6 +78,10 @@ const Square = (props) => {
             color={board[i][j]}
             i={i}
             j={j}
+            captured={captured}
+            setCaptured={setCaptured}
+            whiteMove={whiteMove}
+            setWhiteMove={setWhiteMove}
           />
         </div>
       </Box>
