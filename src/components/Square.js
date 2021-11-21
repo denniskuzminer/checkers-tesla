@@ -13,6 +13,7 @@ const styles = (theme) => ({
 
 const Square = (props) => {
   const [sqNum] = useState(8);
+  const [capturability, setCapturability] = useState([]);
   const [, drop] = useDrop({
     accept: "piece",
     drop: (item) => {
@@ -51,11 +52,48 @@ const Square = (props) => {
       newBoard.forEach((a) => {
         for (let i = 0; i < a.length; i++) {
           a[i] = a[i] === "M" ? "E" : a[i]; // cleanUp
+          a[i] = a[i].replace("C", ""); // cleanUp
         }
       });
       setBoard(newBoard);
       setWhiteMove(!whiteMove);
+      checkCapturability();
     }
+  };
+
+  const checkCapturability = () => {
+    let newBoard = Array.from(board);
+    for (let i = 0; i < board.length; i++) {
+      for (let j = 0; j < board[i].length; j++) {
+        // newBoard[i][j] = newBoard[i][j].replace("C", "");
+        if (board[i][j].includes("W")) {
+          if (i - 1 >= 0 && j + 1 <= 7 && board[i - 1][j + 1] === "B") {
+            if (i - 2 >= 0 && j + 2 <= 7 && board[i - 2][j + 2] === "E") {
+              newBoard[i][j] += "C";
+            }
+          }
+          if (i - 1 >= 0 && j - 1 <= 7 && board[i - 1][j - 1] === "B") {
+            if (i - 2 >= 0 && j - 2 <= 7 && board[i - 2][j - 2] === "E") {
+              newBoard[i][j] += "C";
+            }
+          }
+        }
+        if (board[i][j].includes("B")) {
+          if (i + 1 >= 0 && j + 1 <= 7 && board[i + 1][j + 1] === "W") {
+            if (i + 2 >= 0 && j + 2 <= 7 && board[i + 2][j + 2] === "E") {
+              newBoard[i][j] += "C";
+            }
+          }
+          if (i + 1 >= 0 && j - 1 <= 7 && board[i + 1][j - 1] === "W") {
+            if (i + 2 >= 0 && j - 2 <= 7 && board[i + 2][j - 2] === "E") {
+              newBoard[i][j] += "C";
+            }
+          }
+        }
+      }
+    }
+    setBoard(newBoard);
+    console.log(newBoard);
   };
 
   return (
@@ -80,6 +118,8 @@ const Square = (props) => {
             j={j}
             captured={captured}
             setCaptured={setCaptured}
+            capturability={capturability}
+            setCapturability={setCapturability}
             whiteMove={whiteMove}
             setWhiteMove={setWhiteMove}
           />

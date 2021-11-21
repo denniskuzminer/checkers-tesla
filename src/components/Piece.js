@@ -30,6 +30,8 @@ const Piece = (props) => {
     whiteMove,
     captured,
     setCaptured,
+    capturability,
+    setCapturability,
   } = props;
   const [showMoves, setShowMoves] = useState(false);
   const [{ isDragging }, drag, preview] = useDrag({
@@ -42,54 +44,70 @@ const Piece = (props) => {
 
   const availableMoves = () => {
     let newBoard = Array.from(board);
+    let capturability = [];
+    for (let i = 0; i < board.length; i++) {
+      for (let j = 0; j < board[i].length; j++) {
+        if (newBoard[i][j].includes("C")) {
+          capturability.push(`${i}_${j}_${board[i][j]}`);
+        }
+      }
+    }
+    console.log(`${i}_${j}_${board[i][j]}`);
     // Capturing
-    if (whiteMove && color === "W") {
-      if (i - 1 >= 0 && j + 1 <= 7 && board[i - 1][j + 1] === "B") {
-        if (i - 2 >= 0 && j + 2 <= 7 && board[i - 2][j + 2] === "E") {
-          newBoard[i - 2][j + 2] = "M";
-          setBoard(newBoard);
-          return;
+    if (
+      capturability.includes(`${i}_${j}_${board[i][j]}`) ||
+      capturability.length === 0
+    ) {
+      console.log(capturability + " " + `${i}_${j}_${board[i][j]}`);
+      if (whiteMove && color.includes("W")) {
+        if (i - 1 >= 0 && j + 1 <= 7 && board[i - 1][j + 1] === "B") {
+          if (i - 2 >= 0 && j + 2 <= 7 && board[i - 2][j + 2] === "E") {
+            console.log(true);
+            newBoard[i - 2][j + 2] = "M";
+            setBoard(newBoard);
+            return;
+          }
+        }
+        if (i - 1 >= 0 && j - 1 <= 7 && board[i - 1][j - 1] === "B") {
+          if (i - 2 >= 0 && j - 2 <= 7 && board[i - 2][j - 2] === "E") {
+            newBoard[i - 2][j - 2] = "M";
+            setBoard(newBoard);
+            return;
+          }
         }
       }
-      if (i - 1 >= 0 && j - 1 <= 7 && board[i - 1][j - 1] === "B") {
-        if (i - 2 >= 0 && j - 2 <= 7 && board[i - 2][j - 2] === "E") {
-          newBoard[i - 2][j - 2] = "M";
-          setBoard(newBoard);
-          return;
+      if (!whiteMove && color.includes("B")) {
+        if (i + 1 >= 0 && j + 1 <= 7 && board[i + 1][j + 1] === "W") {
+          if (i + 2 >= 0 && j + 2 <= 7 && board[i + 2][j + 2] === "E") {
+            newBoard[i + 2][j + 2] = "M";
+            setBoard(newBoard);
+            return;
+          }
+        }
+        if (i + 1 >= 0 && j - 1 <= 7 && board[i + 1][j - 1] === "W") {
+          if (i + 2 >= 0 && j - 2 <= 7 && board[i + 2][j - 2] === "E") {
+            newBoard[i + 2][j - 2] = "M";
+            setBoard(newBoard);
+            return;
+          }
         }
       }
-    }
-    if (!whiteMove && color === "B") {
-      if (i + 1 >= 0 && j + 1 <= 7 && board[i + 1][j + 1] === "W") {
-        if (i + 2 >= 0 && j + 2 <= 7 && board[i + 2][j + 2] === "E") {
-          newBoard[i + 2][j + 2] = "M";
-          setBoard(newBoard);
-          return;
+      // Basic Moves
+      if (whiteMove && color === "W") {
+        if (i - 1 >= 0 && j + 1 <= 7 && board[i - 1][j + 1] === "E") {
+          newBoard[i - 1][j + 1] = "M";
+        }
+        if (i - 1 >= 0 && j - 1 <= 7 && board[i - 1][j - 1] === "E") {
+          newBoard[i - 1][j - 1] = "M";
         }
       }
-      if (i + 1 >= 0 && j - 1 <= 7 && board[i + 1][j - 1] === "W") {
-        if (i + 2 >= 0 && j - 2 <= 7 && board[i + 2][j - 2] === "E") {
-          newBoard[i + 2][j - 2] = "M";
-          setBoard(newBoard);
-          return;
+      if (!whiteMove && color === "B") {
+        if (i + 1 >= 0 && j + 1 <= 7 && board[i + 1][j + 1] === "E") {
+          newBoard[i + 1][j + 1] = "M";
         }
-      }
-    }
-    // Basic Moves
-    if (whiteMove && color === "W") {
-      if (i - 1 >= 0 && j + 1 <= 7 && board[i - 1][j + 1] === "E") {
-        newBoard[i - 1][j + 1] = "M";
-      }
-      if (i - 1 >= 0 && j - 1 <= 7 && board[i - 1][j - 1] === "E") {
-        newBoard[i - 1][j - 1] = "M";
-      }
-    }
-    if (!whiteMove && color === "B") {
-      if (i + 1 >= 0 && j + 1 <= 7 && board[i + 1][j + 1] === "E") {
-        newBoard[i + 1][j + 1] = "M";
-      }
-      if (i + 1 >= 0 && j - 1 <= 7 && board[i + 1][j - 1] === "E") {
-        newBoard[i + 1][j - 1] = "M";
+        if (i + 1 >= 0 && j - 1 <= 7 && board[i + 1][j - 1] === "E") {
+          newBoard[i + 1][j - 1] = "M";
+        }
       }
     }
     setBoard(newBoard);
@@ -100,17 +118,19 @@ const Piece = (props) => {
     newBoard.forEach((a) => {
       for (let i = 0; i < a.length; i++) {
         a[i] = a[i] === "M" ? "E" : a[i];
+        // a[i] = a[i].replace("C", "");
       }
     });
     setBoard(newBoard);
   };
 
   useEffect(() => {}, []);
-  if (color === "W" || color === "B") {
+  if (color.includes("W") || color.includes("B")) {
     return (
       <div
         className={
-          (color === "W" && whiteMove) || (color === "B" && !whiteMove)
+          (color.includes("W") && whiteMove) ||
+          (color.includes("B") && !whiteMove)
             ? "checker"
             : "doNotMoveChecker"
         }
@@ -132,9 +152,9 @@ const Piece = (props) => {
         >
           <Avatar
             className={
-              color === "W"
+              color.includes("W")
                 ? classes.white
-                : color === "B"
+                : color.includes("B")
                 ? classes.black
                 : null
             }
