@@ -30,6 +30,7 @@ const Game = (props) => {
         <Board
           whiteMove={whiteMove}
           setWhiteMove={setWhiteMove}
+          players={players}
           captured={captured}
           setCaptured={setCaptured}
         />

@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import withStyles from "@material-ui/core/styles/withStyles";
 import theme from "../theme";
 import { Typography, Box, LinearProgress } from "@material-ui/core";
-// import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import Piece from "./Piece";
 import { useDrop } from "react-dnd";
 
@@ -17,8 +16,6 @@ const Square = (props) => {
   const [, drop] = useDrop({
     accept: "piece",
     drop: (item) => {
-      console.log(item);
-      console.log(i * 8 + j);
       move(item, i, j);
     },
   });
@@ -34,13 +31,24 @@ const Square = (props) => {
     setCaptured,
   } = props;
 
+  const isInRange = (num) => {
+    return num >= 0 && num <= 7;
+  };
+
   const move = (fromItem, toi, toj) => {
     let newBoard = Array.from(board);
+    // checkCapturability();
     if (newBoard[toi][toj] === "M") {
       let [fromi, fromj, color] = fromItem.id.split("_");
       fromItem.id = `${toi}_${toj}_${color}`;
       newBoard[fromi][fromj] = "E";
       newBoard[toi][toj] = color;
+      if (
+        (color.includes("W") && toi === 0) ||
+        (color.includes("B") && toi === 7)
+      ) {
+        newBoard[toi][toj] += "K";
+      }
       if (Math.abs(fromi - toi) === 2) {
         newBoard[(Number(fromi) + Number(toi)) / 2][
           (Number(fromj) + Number(toj)) / 2
@@ -48,6 +56,10 @@ const Square = (props) => {
         setCaptured((prev) =>
           whiteMove ? [captured[0] + 1, prev[1]] : [prev[0], captured[1] + 1]
         );
+        if (checkNextCapturability(toi, toj, color)) {
+          setBoard(newBoard);
+          return;
+        }
       }
       newBoard.forEach((a) => {
         for (let i = 0; i < a.length; i++) {
@@ -58,35 +70,239 @@ const Square = (props) => {
       setBoard(newBoard);
       setWhiteMove(!whiteMove);
       checkCapturability();
+      // makeNextMove();
     }
+  };
+
+  const checkNextCapturability = (i, j, color) => {
+    if (color.includes("W")) {
+      if (
+        isInRange(i - 1) &&
+        isInRange(j + 1) &&
+        board[i - 1][j + 1].includes("B")
+      ) {
+        if (
+          isInRange(i - 2) &&
+          isInRange(j + 2) &&
+          board[i - 2][j + 2] === "E"
+        ) {
+          return true;
+        }
+      }
+      if (
+        isInRange(i - 1) &&
+        isInRange(j - 1) &&
+        board[i - 1][j - 1].includes("B")
+      ) {
+        if (
+          isInRange(i - 2) &&
+          isInRange(j - 2) &&
+          board[i - 2][j - 2] === "E"
+        ) {
+          return true;
+        }
+      }
+      if (color.includes("K")) {
+        if (
+          isInRange(i + 1) &&
+          isInRange(j + 1) &&
+          board[i + 1][j + 1].includes("B")
+        ) {
+          if (
+            isInRange(i + 2) &&
+            isInRange(j + 2) &&
+            board[i + 2][j + 2] === "E"
+          ) {
+            return true;
+          }
+        }
+        if (
+          isInRange(i + 1) &&
+          isInRange(j - 1) &&
+          board[i + 1][j - 1].includes("B")
+        ) {
+          if (
+            isInRange(i + 2) &&
+            isInRange(j - 2) &&
+            board[i + 2][j - 2] === "E"
+          ) {
+            return true;
+          }
+        }
+      }
+    }
+    if (color.includes("B")) {
+      if (
+        isInRange(i + 1) &&
+        isInRange(j + 1) &&
+        board[i + 1][j + 1].includes("W")
+      ) {
+        if (
+          isInRange(i + 2) &&
+          isInRange(j + 2) &&
+          board[i + 2][j + 2] === "E"
+        ) {
+          return true;
+        }
+      }
+      if (
+        isInRange(i + 1) &&
+        isInRange(j - 1) &&
+        board[i + 1][j - 1].includes("W")
+      ) {
+        if (
+          isInRange(i + 2) &&
+          isInRange(j - 2) &&
+          board[i + 2][j - 2] === "E"
+        ) {
+          return true;
+        }
+      }
+      if (color.includes("K")) {
+        if (
+          isInRange(i - 1) &&
+          isInRange(j + 1) &&
+          board[i - 1][j + 1].includes("W")
+        ) {
+          if (
+            isInRange(i - 2) &&
+            isInRange(j + 2) &&
+            board[i - 2][j + 2] === "E"
+          ) {
+            return true;
+          }
+        }
+        if (
+          isInRange(i - 1) &&
+          isInRange(j - 1) &&
+          board[i - 1][j - 1].includes("W")
+        ) {
+          if (
+            isInRange(i - 2) &&
+            isInRange(j - 2) &&
+            board[i - 2][j - 2] === "E"
+          ) {
+            return true;
+          }
+        }
+      }
+    }
+    return false;
   };
 
   const checkCapturability = () => {
     let newBoard = Array.from(board);
     for (let i = 0; i < board.length; i++) {
       for (let j = 0; j < board[i].length; j++) {
-        // newBoard[i][j] = newBoard[i][j].replace("C", "");
         if (board[i][j].includes("W")) {
-          if (i - 1 >= 0 && j + 1 <= 7 && board[i - 1][j + 1] === "B") {
-            if (i - 2 >= 0 && j + 2 <= 7 && board[i - 2][j + 2] === "E") {
+          if (
+            isInRange(i - 1) &&
+            isInRange(j + 1) &&
+            board[i - 1][j + 1].includes("B")
+          ) {
+            if (
+              isInRange(i - 2) &&
+              isInRange(j + 2) &&
+              board[i - 2][j + 2] === "E"
+            ) {
               newBoard[i][j] += "C";
             }
           }
-          if (i - 1 >= 0 && j - 1 <= 7 && board[i - 1][j - 1] === "B") {
-            if (i - 2 >= 0 && j - 2 <= 7 && board[i - 2][j - 2] === "E") {
+          if (
+            isInRange(i - 1) &&
+            isInRange(j - 1) &&
+            board[i - 1][j - 1].includes("B")
+          ) {
+            if (
+              isInRange(i - 2) &&
+              isInRange(j - 2) &&
+              board[i - 2][j - 2] === "E"
+            ) {
               newBoard[i][j] += "C";
+            }
+          }
+          if (board[i][j].includes("K")) {
+            if (
+              isInRange(i + 1) &&
+              isInRange(j + 1) &&
+              board[i + 1][j + 1].includes("B")
+            ) {
+              if (
+                isInRange(i + 2) &&
+                isInRange(j + 2) &&
+                board[i + 2][j + 2] === "E"
+              ) {
+                newBoard[i][j] += "C";
+              }
+            }
+            if (
+              isInRange(i + 1) &&
+              isInRange(j - 1) &&
+              board[i + 1][j - 1].includes("B")
+            ) {
+              if (
+                isInRange(i + 2) &&
+                isInRange(j - 2) &&
+                board[i + 2][j - 2] === "E"
+              ) {
+                newBoard[i][j] += "C";
+              }
             }
           }
         }
         if (board[i][j].includes("B")) {
-          if (i + 1 >= 0 && j + 1 <= 7 && board[i + 1][j + 1] === "W") {
-            if (i + 2 >= 0 && j + 2 <= 7 && board[i + 2][j + 2] === "E") {
+          if (
+            isInRange(i + 1) &&
+            isInRange(j + 1) &&
+            board[i + 1][j + 1].includes("W")
+          ) {
+            if (
+              isInRange(i + 2) &&
+              isInRange(j + 2) &&
+              board[i + 2][j + 2] === "E"
+            ) {
               newBoard[i][j] += "C";
             }
           }
-          if (i + 1 >= 0 && j - 1 <= 7 && board[i + 1][j - 1] === "W") {
-            if (i + 2 >= 0 && j - 2 <= 7 && board[i + 2][j - 2] === "E") {
+          if (
+            isInRange(i + 1) &&
+            isInRange(j - 1) &&
+            board[i + 1][j - 1].includes("W")
+          ) {
+            if (
+              isInRange(i + 2) &&
+              isInRange(j - 2) &&
+              board[i + 2][j - 2] === "E"
+            ) {
               newBoard[i][j] += "C";
+            }
+          }
+          if (board[i][j].includes("K")) {
+            if (
+              isInRange(i - 1) &&
+              isInRange(j + 1) &&
+              board[i - 1][j + 1].includes("W")
+            ) {
+              if (
+                isInRange(i - 2) &&
+                isInRange(j + 2) &&
+                board[i - 2][j + 2] === "E"
+              ) {
+                newBoard[i][j] += "C";
+              }
+            }
+            if (
+              isInRange(i - 1) &&
+              isInRange(j - 1) &&
+              board[i - 1][j - 1].includes("W")
+            ) {
+              if (
+                isInRange(i - 2) &&
+                isInRange(j - 2) &&
+                board[i - 2][j - 2] === "E"
+              ) {
+                newBoard[i][j] += "C";
+              }
             }
           }
         }
