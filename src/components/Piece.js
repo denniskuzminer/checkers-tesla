@@ -53,7 +53,7 @@ const Piece = (props) => {
     return (
       isInRange(i + iOffSet) &&
       isInRange(j + jOffSet) &&
-      board[i + jOffSet][j + jOffSet].includes(color)
+      board[i + iOffSet][j + jOffSet].indexOf(`${color}`) !== -1
     );
   };
 
@@ -67,8 +67,7 @@ const Piece = (props) => {
         }
       }
     }
-    console.log(capturability + " " + `${i}_${j}_${board[i][j]}`);
-    // console.log(capturability.includes("B"));
+    console.log(capturability);
     // Capturing
     if (
       capturability.includes(`${i}_${j}_${board[i][j]}`) ||
@@ -78,241 +77,132 @@ const Piece = (props) => {
       (capturability.toString().includes("W") &&
         `${i}_${j}_${board[i][j]}`.includes("B"))
     ) {
-      console.log(
-        "entered " + capturability + " " + `${i}_${j}_${board[i][j]}`
-      );
       setCapture(false);
-      if (
-        whiteMove &&
-        color.includes("WC") &&
-        capturability.toString().includes("WC")
-      ) {
-        // console.log("white can capture");
+      if (whiteMove) {
         if (
-          isInRange(i - 1) &&
-          isInRange(j + 1) &&
-          board[i - 1][j + 1].includes("B")
-          // checkSpace(-1,1,"B")
+          (color.includes("WC") && capturability.toString().includes("WC")) ||
+          (color.includes("WKC") && capturability.toString().includes("WKC"))
         ) {
-          if (
-            isInRange(i - 2) &&
-            isInRange(j + 2) &&
-            board[i - 2][j + 2] === "E"
-          ) {
-            newBoard[i - 2][j + 2] = "M";
-            setBoard(newBoard);
-            console.log("white can capture");
-            setCapture(true);
-            return;
+          if (checkSpace(-1, 1, "B")) {
+            if (checkSpace(-2, 2, "E")) {
+              newBoard[i - 2][j + 2] = "M";
+              setBoard(newBoard);
+              setCapture(true);
+            }
           }
-        }
-        if (
-          isInRange(i - 1) &&
-          isInRange(j - 1) &&
-          board[i - 1][j - 1].includes("B")
-        ) {
-          if (
-            isInRange(i - 2) &&
-            isInRange(j - 2) &&
-            board[i - 2][j - 2] === "E"
-          ) {
-            newBoard[i - 2][j - 2] = "M";
-            setBoard(newBoard);
-            console.log("white can capture");
-            setCapture(true);
-            return;
-          }
-        }
-      }
-      if (
-        whiteMove &&
-        color.includes("WKC") &&
-        capturability.toString().includes("WKC")
-      ) {
-        if (
-          isInRange(i + 1) &&
-          isInRange(j + 1) &&
-          board[i + 1][j + 1].includes("B")
-        ) {
-          if (
-            isInRange(i + 2) &&
-            isInRange(j + 2) &&
-            board[i + 2][j + 2] === "E"
-          ) {
-            newBoard[i + 2][j + 2] = "M";
-            setBoard(newBoard);
-            if (
-              isInRange(i + 1) &&
-              isInRange(j - 1) &&
-              board[i + 1][j - 1].includes("B")
-            ) {
-              if (
-                isInRange(i + 2) &&
-                isInRange(j - 2) &&
-                board[i + 2][j - 2] === "E"
-              ) {
-                newBoard[i + 2][j - 2] = "M";
-                setBoard(newBoard);
-                setCapture(true);
-              }
+          if (checkSpace(-1, -1, "B")) {
+            if (checkSpace(-2, -2, "E")) {
+              newBoard[i - 2][j - 2] = "M";
+              setBoard(newBoard);
+              setCapture(true);
             }
           }
         }
-        if (
-          isInRange(i + 1) &&
-          isInRange(j - 1) &&
-          board[i + 1][j - 1].includes("B")
-        ) {
-          if (
-            isInRange(i + 2) &&
-            isInRange(j - 2) &&
-            board[i + 2][j - 2] === "E"
-          ) {
-            newBoard[i + 2][j + 2] = "M";
-            setBoard(newBoard);
-            if (
-              isInRange(i + 1) &&
-              isInRange(j + 1) &&
-              board[i + 1][j + 1].includes("B")
-            ) {
-              if (
-                isInRange(i + 2) &&
-                isInRange(j + 2) &&
-                board[i + 2][j + 2] === "E"
-              ) {
-                newBoard[i + 2][j - 2] = "M";
-                setBoard(newBoard);
-                setCapture(true);
+        if (color.includes("WKC") && capturability.toString().includes("WKC")) {
+          if (checkSpace(1, 1, "B")) {
+            if (checkSpace(2, 2, "E")) {
+              newBoard[i + 2][j + 2] = "M";
+              if (checkSpace(1, -1, "B")) {
+                if (checkSpace(2, -2, "E")) {
+                  newBoard[i + 2][j - 2] = "M";
+                }
               }
+              setBoard(newBoard);
+              setCapture(true);
             }
           }
-        }
-        if (capture) {
-          console.log("hi");
-          return;
-        }
-      }
-      if (
-        !whiteMove &&
-        color.includes("BC") &&
-        capturability.toString().includes("BC")
-      ) {
-        // console.log("black can capture");
-        if (
-          isInRange(i + 1) &&
-          isInRange(j + 1) &&
-          board[i + 1][j + 1].includes("W")
-        ) {
-          if (
-            isInRange(i + 2) &&
-            isInRange(j + 2) &&
-            board[i + 2][j + 2] === "E"
-          ) {
-            newBoard[i + 2][j + 2] = "M";
-            setBoard(newBoard);
-            console.log("black can capture");
-            setCapture(true);
-            return;
+          if (checkSpace(1, -1, "B")) {
+            if (checkSpace(2, -2, "E")) {
+              newBoard[i + 2][j - 2] = "M";
+              if (checkSpace(1, 1, "B")) {
+                if (checkSpace(2, 2, "E")) {
+                  newBoard[i + 2][j + 2] = "M";
+                }
+              }
+              setBoard(newBoard);
+              setCapture(true);
+            }
           }
-        }
-        if (
-          isInRange(i + 1) &&
-          isInRange(j - 1) &&
-          board[i + 1][j - 1].includes("W")
-        ) {
-          if (
-            isInRange(i + 2) &&
-            isInRange(j - 2) &&
-            board[i + 2][j - 2] === "E"
-          ) {
-            newBoard[i + 2][j - 2] = "M";
-            setBoard(newBoard);
-            console.log("black can capture");
-            setCapture(true);
+          if (capture) {
             return;
           }
         }
       }
-      if (
-        whiteMove &&
-        color.includes("BKC") &&
-        capturability.toString().includes("BKC")
-      ) {
+      if (!whiteMove) {
         if (
-          isInRange(i + 1) &&
-          isInRange(j + 1) &&
-          board[i + 1][j + 1].includes("W")
+          (color.includes("BC") && capturability.toString().includes("BC")) ||
+          (color.includes("BKC") && capturability.toString().includes("BKC"))
         ) {
-          if (
-            isInRange(i + 2) &&
-            isInRange(j + 2) &&
-            board[i + 2][j + 2] === "E"
-          ) {
-            newBoard[i + 2][j + 2] = "M";
-            setBoard(newBoard);
-            if (
-              isInRange(i + 1) &&
-              isInRange(j - 1) &&
-              board[i + 1][j - 1].includes("W")
-            ) {
-              if (
-                isInRange(i + 2) &&
-                isInRange(j - 2) &&
-                board[i + 2][j - 2] === "E"
-              ) {
-                newBoard[i + 2][j - 2] = "M";
-                setBoard(newBoard);
-                setCapture(true);
-                return;
-              }
+          if (checkSpace(1, 1, "W")) {
+            if (checkSpace(2, 2, "E")) {
+              newBoard[i + 2][j + 2] = "M";
+              setBoard(newBoard);
+              setCapture(true);
+            }
+          }
+          if (checkSpace(1, -1, "W")) {
+            if (checkSpace(2, -2, "E")) {
+              newBoard[i + 2][j - 2] = "M";
+              setBoard(newBoard);
+              setCapture(true);
             }
           }
         }
-      }
-      console.log(capture);
-      if (capture) {
-        console.log("hi");
-        return;
+        if (color.includes("BKC") && capturability.toString().includes("BKC")) {
+          if (checkSpace(-1, -1, "W")) {
+            if (checkSpace(-2, -2, "E")) {
+              newBoard[i - 2][j - 2] = "M";
+              if (checkSpace(-1, 1, "W")) {
+                if (checkSpace(-2, 2, "E")) {
+                  newBoard[i - 2][j + 2] = "M";
+                }
+              }
+              setBoard(newBoard);
+              setCapture(true);
+            }
+          }
+          if (checkSpace(-1, 1, "W")) {
+            if (checkSpace(-2, 2, "E")) {
+              newBoard[i - 2][j + 2] = "M";
+              if (checkSpace(-1, -1, "W")) {
+                if (checkSpace(-2, -2, "E")) {
+                  newBoard[i - 2][j - 2] = "M";
+                }
+              }
+              setBoard(newBoard);
+              setCapture(true);
+            }
+          }
+          if (capture) {
+            return;
+          }
+        }
       }
       // Basic Moves
       // console.log("Other moves");
       if (
         whiteMove &&
         color.includes("W") &&
-        !capturability.toString().includes("WC")
+        !capturability.toString().includes("WC") &&
+        !capturability.toString().includes("WKC")
       ) {
-        if (
-          isInRange(i - 1) &&
-          isInRange(j + 1) &&
-          board[i - 1][j + 1] === "E"
-        ) {
+        if (checkSpace(-1, 1, "E")) {
           newBoard[i - 1][j + 1] = "M";
         }
-        if (
-          isInRange(i - 1) &&
-          isInRange(j - 1) &&
-          board[i - 1][j - 1] === "E"
-        ) {
+        if (checkSpace(-1, -1, "E")) {
           newBoard[i - 1][j - 1] = "M";
         }
       }
       if (
         !whiteMove &&
         color.includes("B") &&
-        !capturability.toString().includes("BC")
+        !capturability.toString().includes("BC") &&
+        !capturability.toString().includes("BKC")
       ) {
-        if (
-          isInRange(i + 1) &&
-          isInRange(j + 1) &&
-          board[i + 1][j + 1] === "E"
-        ) {
+        if (checkSpace(1, 1, "E")) {
           newBoard[i + 1][j + 1] = "M";
         }
-        if (
-          isInRange(i + 1) &&
-          isInRange(j - 1) &&
-          board[i + 1][j - 1] === "E"
-        ) {
+        if (checkSpace(1, -1, "E")) {
           newBoard[i + 1][j - 1] = "M";
         }
       }
@@ -321,18 +211,10 @@ const Piece = (props) => {
         color.includes("WK") &&
         !capturability.toString().includes("WKC")
       ) {
-        if (
-          isInRange(i + 1) &&
-          isInRange(j + 1) &&
-          board[i + 1][j + 1] === "E"
-        ) {
+        if (checkSpace(1, 1, "E")) {
           newBoard[i + 1][j + 1] = "M";
         }
-        if (
-          isInRange(i + 1) &&
-          isInRange(j - 1) &&
-          board[i + 1][j - 1] === "E"
-        ) {
+        if (checkSpace(1, -1, "E")) {
           newBoard[i + 1][j - 1] = "M";
         }
       }
@@ -341,18 +223,10 @@ const Piece = (props) => {
         color.includes("BK") &&
         !capturability.toString().includes("BKC")
       ) {
-        if (
-          isInRange(i - 1) &&
-          isInRange(j + 1) &&
-          board[i - 1][j + 1] === "E"
-        ) {
+        if (checkSpace(-1, 1, "E")) {
           newBoard[i - 1][j + 1] = "M";
         }
-        if (
-          isInRange(i - 1) &&
-          isInRange(j - 1) &&
-          board[i - 1][j - 1] === "E"
-        ) {
+        if (checkSpace(-1, -1, "E")) {
           newBoard[i - 1][j - 1] = "M";
         }
       }
@@ -390,6 +264,7 @@ const Piece = (props) => {
           }}
           onMouseEnter={() => {
             setShowMoves(true);
+            // if (board[i][j].includes("K")) availableMoves();
             availableMoves();
           }}
           onMouseLeave={() => {

@@ -43,6 +43,15 @@ const Game = (props) => {
         <Typography variant="h2">
           {"Black has taken: " + captured[1]}
         </Typography>
+        {captured[0] === 12 ? (
+          <div>
+            <div>White has won</div>
+          </div>
+        ) : captured[1] === 12 ? (
+          <div>
+            <div>Black has won</div>
+          </div>
+        ) : null}
       </div>
     </div>
   );

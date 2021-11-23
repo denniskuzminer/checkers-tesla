@@ -47,7 +47,7 @@ const Square = (props) => {
         (color.includes("W") && toi === 0) ||
         (color.includes("B") && toi === 7)
       ) {
-        newBoard[toi][toj] += "K";
+        newBoard[toi][toj] += newBoard[toi][toj].includes("K") ? "" : "K";
       }
       if (Math.abs(fromi - toi) === 2) {
         newBoard[(Number(fromi) + Number(toi)) / 2][
@@ -75,235 +75,77 @@ const Square = (props) => {
   };
 
   const checkNextCapturability = (i, j, color) => {
+    const checkSpace = (iOffSet, jOffSet, color) => {
+      return (
+        isInRange(i + iOffSet) &&
+        isInRange(j + jOffSet) &&
+        board[i + iOffSet][j + jOffSet].indexOf(`${color}`) !== -1
+      );
+    };
     if (color.includes("W")) {
-      if (
-        isInRange(i - 1) &&
-        isInRange(j + 1) &&
-        board[i - 1][j + 1].includes("B")
-      ) {
-        if (
-          isInRange(i - 2) &&
-          isInRange(j + 2) &&
-          board[i - 2][j + 2] === "E"
-        ) {
-          return true;
-        }
-      }
-      if (
-        isInRange(i - 1) &&
-        isInRange(j - 1) &&
-        board[i - 1][j - 1].includes("B")
-      ) {
-        if (
-          isInRange(i - 2) &&
-          isInRange(j - 2) &&
-          board[i - 2][j - 2] === "E"
-        ) {
-          return true;
-        }
-      }
+      if (checkSpace(-1, 1, "B")) if (checkSpace(-2, 2, "E")) return true;
+
+      if (checkSpace(-1, -1, "B")) if (checkSpace(-2, -2, "E")) return true;
+
       if (color.includes("K")) {
-        if (
-          isInRange(i + 1) &&
-          isInRange(j + 1) &&
-          board[i + 1][j + 1].includes("B")
-        ) {
-          if (
-            isInRange(i + 2) &&
-            isInRange(j + 2) &&
-            board[i + 2][j + 2] === "E"
-          ) {
-            return true;
-          }
-        }
-        if (
-          isInRange(i + 1) &&
-          isInRange(j - 1) &&
-          board[i + 1][j - 1].includes("B")
-        ) {
-          if (
-            isInRange(i + 2) &&
-            isInRange(j - 2) &&
-            board[i + 2][j - 2] === "E"
-          ) {
-            return true;
-          }
-        }
+        if (checkSpace(1, 1, "B")) if (checkSpace(2, 2, "E")) return true;
+
+        if (checkSpace(1, -1, "B")) if (checkSpace(2, -2, "E")) return true;
       }
     }
     if (color.includes("B")) {
-      if (
-        isInRange(i + 1) &&
-        isInRange(j + 1) &&
-        board[i + 1][j + 1].includes("W")
-      ) {
-        if (
-          isInRange(i + 2) &&
-          isInRange(j + 2) &&
-          board[i + 2][j + 2] === "E"
-        ) {
-          return true;
-        }
-      }
-      if (
-        isInRange(i + 1) &&
-        isInRange(j - 1) &&
-        board[i + 1][j - 1].includes("W")
-      ) {
-        if (
-          isInRange(i + 2) &&
-          isInRange(j - 2) &&
-          board[i + 2][j - 2] === "E"
-        ) {
-          return true;
-        }
-      }
+      if (checkSpace(1, 1, "W")) if (checkSpace(2, 2, "E")) return true;
+
+      if (checkSpace(1, -1, "W")) if (checkSpace(2, -2, "E")) return true;
+
       if (color.includes("K")) {
-        if (
-          isInRange(i - 1) &&
-          isInRange(j + 1) &&
-          board[i - 1][j + 1].includes("W")
-        ) {
-          if (
-            isInRange(i - 2) &&
-            isInRange(j + 2) &&
-            board[i - 2][j + 2] === "E"
-          ) {
-            return true;
-          }
-        }
-        if (
-          isInRange(i - 1) &&
-          isInRange(j - 1) &&
-          board[i - 1][j - 1].includes("W")
-        ) {
-          if (
-            isInRange(i - 2) &&
-            isInRange(j - 2) &&
-            board[i - 2][j - 2] === "E"
-          ) {
-            return true;
-          }
-        }
+        if (checkSpace(-1, 1, "W")) if (checkSpace(-2, 2, "E")) return true;
+
+        if (checkSpace(-1, -1, "W")) if (checkSpace(-2, -2, "E")) return true;
       }
     }
     return false;
   };
 
   const checkCapturability = () => {
+    const checkSpace = (i, j, iOffSet, jOffSet, color) => {
+      return (
+        isInRange(i + iOffSet) &&
+        isInRange(j + jOffSet) &&
+        board[i + iOffSet][j + jOffSet].indexOf(`${color}`) !== -1
+      );
+    };
     let newBoard = Array.from(board);
     for (let i = 0; i < board.length; i++) {
       for (let j = 0; j < board[i].length; j++) {
         if (board[i][j].includes("W")) {
-          if (
-            isInRange(i - 1) &&
-            isInRange(j + 1) &&
-            board[i - 1][j + 1].includes("B")
-          ) {
-            if (
-              isInRange(i - 2) &&
-              isInRange(j + 2) &&
-              board[i - 2][j + 2] === "E"
-            ) {
-              newBoard[i][j] += "C";
-            }
-          }
-          if (
-            isInRange(i - 1) &&
-            isInRange(j - 1) &&
-            board[i - 1][j - 1].includes("B")
-          ) {
-            if (
-              isInRange(i - 2) &&
-              isInRange(j - 2) &&
-              board[i - 2][j - 2] === "E"
-            ) {
-              newBoard[i][j] += "C";
-            }
-          }
+          if (checkSpace(i, j, -1, 1, "B"))
+            if (checkSpace(i, j, -2, 2, "E")) newBoard[i][j] += "C";
+
+          if (checkSpace(i, j, -1, -1, "B"))
+            if (checkSpace(i, j, -2, -2, "E")) newBoard[i][j] += "C";
+
           if (board[i][j].includes("K")) {
-            if (
-              isInRange(i + 1) &&
-              isInRange(j + 1) &&
-              board[i + 1][j + 1].includes("B")
-            ) {
-              if (
-                isInRange(i + 2) &&
-                isInRange(j + 2) &&
-                board[i + 2][j + 2] === "E"
-              ) {
-                newBoard[i][j] += "C";
-              }
-            }
-            if (
-              isInRange(i + 1) &&
-              isInRange(j - 1) &&
-              board[i + 1][j - 1].includes("B")
-            ) {
-              if (
-                isInRange(i + 2) &&
-                isInRange(j - 2) &&
-                board[i + 2][j - 2] === "E"
-              ) {
-                newBoard[i][j] += "C";
-              }
-            }
+            if (checkSpace(i, j, 1, 1, "B"))
+              if (checkSpace(i, j, 2, 2, "E")) newBoard[i][j] += "C";
+
+            if (checkSpace(i, j, 1, -1, "B"))
+              if (checkSpace(i, j, 2, -2, "E")) newBoard[i][j] += "C";
           }
         }
         if (board[i][j].includes("B")) {
-          if (
-            isInRange(i + 1) &&
-            isInRange(j + 1) &&
-            board[i + 1][j + 1].includes("W")
-          ) {
-            if (
-              isInRange(i + 2) &&
-              isInRange(j + 2) &&
-              board[i + 2][j + 2] === "E"
-            ) {
-              newBoard[i][j] += "C";
-            }
-          }
-          if (
-            isInRange(i + 1) &&
-            isInRange(j - 1) &&
-            board[i + 1][j - 1].includes("W")
-          ) {
-            if (
-              isInRange(i + 2) &&
-              isInRange(j - 2) &&
-              board[i + 2][j - 2] === "E"
-            ) {
-              newBoard[i][j] += "C";
-            }
-          }
+          if (checkSpace(i, j, 1, 1, "W"))
+            if (checkSpace(i, j, 2, 2, "E")) newBoard[i][j] += "C";
+
+          if (checkSpace(i, j, 1, -1, "W"))
+            if (checkSpace(i, j, 2, -2, "E")) newBoard[i][j] += "C";
+
           if (board[i][j].includes("K")) {
-            if (
-              isInRange(i - 1) &&
-              isInRange(j + 1) &&
-              board[i - 1][j + 1].includes("W")
-            ) {
-              if (
-                isInRange(i - 2) &&
-                isInRange(j + 2) &&
-                board[i - 2][j + 2] === "E"
-              ) {
-                newBoard[i][j] += "C";
-              }
-            }
-            if (
-              isInRange(i - 1) &&
-              isInRange(j - 1) &&
-              board[i - 1][j - 1].includes("W")
-            ) {
-              if (
-                isInRange(i - 2) &&
-                isInRange(j - 2) &&
-                board[i - 2][j - 2] === "E"
-              ) {
-                newBoard[i][j] += "C";
-              }
-            }
+            if (checkSpace(i, j, -1, 1, "W"))
+              if (checkSpace(i, j, -2, 2, "E")) newBoard[i][j] += "C";
+
+            if (checkSpace(i, j, -1, -1, "W"))
+              if (checkSpace(i, j, -2, -2, "E")) newBoard[i][j] += "C";
           }
         }
       }
