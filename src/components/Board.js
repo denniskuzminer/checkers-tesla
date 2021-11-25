@@ -1,15 +1,16 @@
 import React, { useEffect, useState } from "react";
 import withStyles from "@material-ui/core/styles/withStyles";
-import theme from "../theme";
-import { Typography, Box, LinearProgress } from "@material-ui/core";
-// import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
-import Piece from "./Piece";
+import { LinearProgress } from "@material-ui/core";
 import Square from "./Square";
-import { useDrop } from "react-dnd";
 
 const styles = (theme) => ({
   square: { width: 100, height: 100 },
   text: { color: "#fff" },
+  board: {
+    // mozBoxShadow: "0 0 18px #ccc",
+    // webkitBoxShadow: "0 0 18px #ccc",
+    // boxShadow: "0 0 18px #ccc",
+  },
 });
 
 const Board = (props) => {
@@ -21,6 +22,7 @@ const Board = (props) => {
   const [board, setBoard] = useState(
     [...Array(sqNum)].map((x) => [...Array(sqNum)])
   );
+
   const {
     classes,
     whiteMove,
@@ -28,6 +30,11 @@ const Board = (props) => {
     captured,
     setCaptured,
     players,
+    prevBoards,
+    setPrevBoards,
+    gameOngoing,
+    setResetAsked,
+    resetAsked,
   } = props;
 
   useEffect(() => {
@@ -48,6 +55,27 @@ const Board = (props) => {
     setUILoading(false);
   }, []);
 
+  useEffect(() => {
+    if (resetAsked) {
+      let boardIndex = [...Array(sqNum)].map((x) => [...Array(sqNum)]);
+      let board = [...Array(sqNum)].map((x) => [...Array(sqNum)]);
+      for (let i = 0; i < 8; i++) {
+        for (let j = 0; j < 8; j++) {
+          boardIndex[i][j] = i * 8 + j;
+          if ((i + j) % 2 === 1 && i * 8 + j <= 23) {
+            board[i][j] = "B";
+          } else if ((i + j) % 2 === 1 && i * 8 + j >= 40) {
+            board[i][j] = "W";
+          } else board[i][j] = "E";
+        }
+      }
+      setCurrSquare(boardIndex);
+      setBoard(board);
+      setUILoading(false);
+      setResetAsked(false);
+    }
+  }, [resetAsked]);
+
   if (UILoading) {
     return (
       <div>
@@ -56,7 +84,7 @@ const Board = (props) => {
     );
   } else {
     return (
-      <div id="boardContainer">
+      <div id="boardContainer" className={classes.board}>
         <table id="board" border="0" cellSpacing="0" cellPadding="0">
           <tbody>
             {board.map((e, i) => (
@@ -72,6 +100,9 @@ const Board = (props) => {
                     setWhiteMove={setWhiteMove}
                     captured={captured}
                     setCaptured={setCaptured}
+                    prevBoards={prevBoards}
+                    gameOngoing={gameOngoing}
+                    setPrevBoards={setPrevBoards}
                   />
                 ))}
               </tr>

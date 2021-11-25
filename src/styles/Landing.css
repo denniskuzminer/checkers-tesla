@@ -1,0 +1,90 @@
+#titleContainer {
+  margin-top: -90px;
+  display: flex;
+  justify-content: center;
+}
+#titleInner {
+  text-align: center;
+  overflow: hidden;
+  padding: 0.4em;
+  animation: Slide_Up 1.4s ease;
+}
+#title {
+  text-align: center;
+  overflow: hidden;
+  /* padding: 0.4em; */
+  animation: Slide_Up 1.8s ease;
+}
+#subtitle {
+  text-align: center;
+  overflow: hidden;
+  /* padding: 0.4em; */
+  animation: Slide_Up 2s ease;
+}
+#buttonContainer {
+  display: flex;
+  justify-content: center;
+}
+#buttonInner {
+  text-align: center;
+  overflow: hidden;
+  padding: 0.4em;
+  animation: Slide_Up 2.3s ease;
+}
+#button1 {
+  text-align: center;
+  overflow: hidden;
+  padding: 0.4em;
+  animation: Slide_Up 2.3s ease;
+}
+#button1::before {
+  content: "";
+  position: absolute;
+  display: block;
+  width: 100%;
+  height: 2px;
+  bottom: 0;
+  left: 0;
+  background-color: rgb(255, 255, 255);
+  transform: scaleX(0);
+  transition: transform 0.3s ease;
+}
+#button1:hover::before {
+  transform: scaleX(1);
+}
+#button2 {
+  text-align: center;
+  overflow: hidden;
+  padding: 0.4em;
+  animation: Slide_Up 2.3s ease;
+}
+#button2::before {
+  content: "";
+  position: absolute;
+  display: block;
+  width: 100%;
+  height: 2px;
+  bottom: 0;
+  left: 0;
+  background-color: rgb(255, 255, 255);
+  transform: scaleX(0);
+  transition: transform 0.3s ease;
+}
+#button2:hover::before {
+  transform: scaleX(1);
+}
+#diag1 {
+  transform: rotate(50deg);
+}
+#diag2 {
+  transform: rotate(50deg);
+  overflow: auto;
+}
+@keyframes Slide_Up {
+  0% {
+    transform: translateY(250px);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
