@@ -36,7 +36,7 @@ const Piece = (props) => {
   } = props;
 
   const [capture, setCapture] = useState(false);
-
+  // ids of checkers have the indices (i, j) and their color/if they are kings/if they can capture (color)
   const [{ isDragging }, drag] = useDrag({
     type: "piece",
     item: { id: `${i}_${j}_${color}`, type: "piece" },
@@ -45,10 +45,20 @@ const Piece = (props) => {
     },
   });
 
+  /**
+   * Helper function to stop index out of bounds
+   * @param {Number} num
+   */
   const isInRange = (num) => {
     return num >= 0 && num <= 7;
   };
 
+  /**
+   * This is to check if a space contains a certain color
+   * @param {Number} iOffSet
+   * @param {Number} jOffSet
+   * @param {String} color
+   */
   const checkSpace = (iOffSet, jOffSet, color) => {
     return (
       isInRange(i + iOffSet) &&
@@ -57,6 +67,14 @@ const Piece = (props) => {
     );
   };
 
+  /**
+   * On hover, shows the available moves for a given checker.
+   * Then, display it by changing an empty square to have the move marker "M"
+   * @param {Number} i
+   * @param {Number} j
+   * @param {Array} board
+   * @param {String} color
+   */
   const availableMoves = (
     i = props.i,
     j = props.j,
@@ -66,6 +84,7 @@ const Piece = (props) => {
     if (gameOngoing) {
       let newBoard = Array.from(board);
       let capturability = [];
+      // 1. Check which pieces can capture
       for (let i = 0; i < board.length; i++) {
         for (let j = 0; j < board[i].length; j++) {
           if (newBoard[i][j].includes("C")) {
@@ -73,8 +92,7 @@ const Piece = (props) => {
           }
         }
       }
-      // console.log(capturability);
-      // Capturing
+      // 2. Block other moves if there exists a piece that can be captured
       if (
         capturability.includes(`${i}_${j}_${board[i][j]}`) ||
         capturability.length === 0 ||
@@ -84,6 +102,7 @@ const Piece = (props) => {
           `${i}_${j}_${board[i][j]}`.includes("B"))
       ) {
         setCapture(false);
+        // 3.1. Check if white can capture forward
         if (whiteMove) {
           if (
             (color.includes("WC") && capturability.toString().includes("WC")) ||
@@ -104,6 +123,7 @@ const Piece = (props) => {
               }
             }
           }
+          // 3.2. Check if white can capture backward for kings
           if (
             color.includes("WKC") &&
             capturability.toString().includes("WKC")
@@ -132,11 +152,13 @@ const Piece = (props) => {
                 setCapture(true);
               }
             }
+            // 3.3. Block everything else
             if (capture) {
               return;
             }
           }
         }
+        // 4.1. Check if black can capture forward
         if (!whiteMove) {
           if (
             (color.includes("BC") && capturability.toString().includes("BC")) ||
@@ -157,6 +179,7 @@ const Piece = (props) => {
               }
             }
           }
+          // 4.2. Check if black can capture backward for kings
           if (
             color.includes("BKC") &&
             capturability.toString().includes("BKC")
@@ -185,19 +208,20 @@ const Piece = (props) => {
                 setCapture(true);
               }
             }
+            // 4.3. Block everything else
             if (capture) {
               return;
             }
           }
         }
         // Basic Moves
-        // console.log("Other moves");
         if (
           whiteMove &&
           color.includes("W") &&
           !capturability.toString().includes("WC") &&
           !capturability.toString().includes("WKC")
         ) {
+          // 5.1. See if white can make a regular forward move
           if (checkSpace(-1, 1, "E")) {
             newBoard[i - 1][j + 1] = "M";
           }
@@ -211,6 +235,7 @@ const Piece = (props) => {
           !capturability.toString().includes("BC") &&
           !capturability.toString().includes("BKC")
         ) {
+          // 5.2. See if black can make a regular forward move
           if (checkSpace(1, 1, "E")) {
             newBoard[i + 1][j + 1] = "M";
           }
@@ -223,6 +248,7 @@ const Piece = (props) => {
           color.includes("WK") &&
           !capturability.toString().includes("WKC")
         ) {
+          // 6.1. See if a white king can make a regular backward move
           if (checkSpace(1, 1, "E")) {
             newBoard[i + 1][j + 1] = "M";
           }
@@ -235,6 +261,7 @@ const Piece = (props) => {
           color.includes("BK") &&
           !capturability.toString().includes("BKC")
         ) {
+          // 6.2. See if a black king can make a regular backward move
           if (checkSpace(-1, 1, "E")) {
             newBoard[i - 1][j + 1] = "M";
           }
@@ -247,12 +274,14 @@ const Piece = (props) => {
     }
   };
 
+  /**
+   * Get rid of all M's. At the end of the move function in Square, clean up for remaining M's and C's is also run
+   */
   const cleanUp = () => {
     let newBoard = Array.from(board);
     newBoard.forEach((a) => {
       for (let i = 0; i < a.length; i++) {
         a[i] = a[i] === "M" ? "E" : a[i];
-        // a[i] = a[i].replace("C", "");
       }
     });
     setBoard(newBoard);

@@ -1,6 +1,6 @@
 # Description and Problem Statement
 
-## This app is allows users to play checkers with 1 and 2 people (locally)
+## This app is allows users to play checkers locally with a friend or with a bot
 
 ### For the checkers coding challenge, the following requirements were satisfied
 
@@ -37,3 +37,4 @@
 
 - When a piece is kinged, you can only move it on the next turn _even if it can be/is in a capture chain._ (I'm pretty sure that's how checkers works¿?¿?)
 - Capture chains do not work for the "AI" in 1 player mode. For the player, it works, but for the "AI," the player actually needs to finish the capture chain by moving for the "AI." The next capture will still be the only possible next move, though.
+- If there are no moves remaining for a particular player, there will be no notification. Instead you can use the reset button on the side to start over.

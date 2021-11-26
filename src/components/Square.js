@@ -39,6 +39,13 @@ const Square = (props) => {
     return num >= 0 && num <= 7;
   };
 
+  /**
+   * Resets the board with the actions taken by user by setting
+   * the fromItem to the position toi and toj
+   * @param {Object} fromItem
+   * @param {Number} toi
+   * @param {Number} toj
+   */
   const move = (fromItem, toi, toj) => {
     let newBoard = Array.from(board);
     if (newBoard[toi][toj] === "M") {
@@ -77,54 +84,31 @@ const Square = (props) => {
     }
   };
 
+  /**
+   * Because whiteMove is set by other components it will cause this to run a lot,
+   * so allocating a new variable that mirrors whiteMove locally, gets rid of all these side effects.
+   * If there is only one player than this makes the "AI" move, but it does so randomly.
+   */
   useEffect(() => {
     if (players === 1 && false === whiteMove) {
       let nextMoves = makeNextMove();
       let random = Math.floor(Math.random() * nextMoves.length);
       if (whiteMove === false && nextMoves.length > 0) {
         nextMoves.forEach((e, i) => {
-          console.log(e[0].id);
           if (e[0].id && e[0].id.includes("C")) {
             random = i;
           }
         });
-        // console.log(nextMoves);
-
         move(nextMoves[random][0], nextMoves[random][1], nextMoves[random][2]);
       }
-      // console.log(lastMoveWasCapture);
-      // if (
-      //   !whiteMove &&
-      //   lastMoveWasCapture &&
-      //   checkNextCapturability(
-      //     nextMoves[random][1],
-      //     nextMoves[random][2],
-      //     nextMoves[random][0].id.split("_")[2]
-      //   )
-      // ) {
-      //   setLocalWhiteMove(false);
-      //   // setWhiteMove(false);
-      //   console.log("in a chain");
-      //   let nextMoves = makeNextMove();
-      //   let random = Math.floor(Math.random() * nextMoves.length);
-      //   if (whiteMove === false && nextMoves.length > 0) {
-      //     nextMoves.forEach((e, i) => {
-      //       if (e[0].id.includes("C")) {
-      //         random = i;
-      //       }
-      //     });
-      //     console.log(nextMoves);
-
-      //     move(
-      //       nextMoves[random][0],
-      //       nextMoves[random][1],
-      //       nextMoves[random][2]
-      //     );
-      //   }
-      // }
     }
   }, [localWhiteMove]);
 
+  /**
+   * This is a copy of availableMoves() in Piece.js (look in ./Piece.js for more info) 
+   * with the added feature that it iterates through the entire 2d board array
+   * @returns An array of all possible next moves that is fed into useEffect() and then to move()
+   */
   const makeNextMove = () => {
     const isInRange = (num) => {
       return num >= 0 && num <= 7;
@@ -321,6 +305,13 @@ const Square = (props) => {
     return nextMoves;
   };
 
+  /**
+   * This is part of the move function and checks for capture chains
+   * @param {Number} i 
+   * @param {Number} j 
+   * @param {String} color 
+   * @returns {boolean} Answers the question, can you capture again after the move you just made?
+   */
   const checkNextCapturability = (i, j, color) => {
     const checkSpace = (iOffSet, jOffSet, color) => {
       return (
@@ -354,6 +345,10 @@ const Square = (props) => {
     return false;
   };
 
+  /**
+   * Alters the board array to see if any piece can capture another
+   * This important because if any piece can capture another, it must be the only move that can be taken  
+   */
   const checkCapturability = () => {
     const checkSpace = (i, j, iOffSet, jOffSet, color) => {
       return (

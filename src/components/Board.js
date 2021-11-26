@@ -37,6 +37,9 @@ const Board = (props) => {
     resetAsked,
   } = props;
 
+  /**
+   * useEffect sets up the board on initial render and when a reset is asked
+   */
   useEffect(() => {
     let boardIndex = [...Array(sqNum)].map((x) => [...Array(sqNum)]);
     let board = [...Array(sqNum)].map((x) => [...Array(sqNum)]);

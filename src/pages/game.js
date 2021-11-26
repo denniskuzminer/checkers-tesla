@@ -57,7 +57,7 @@ const styles = (theme) => ({
     position: "absolute",
     left: 0,
     top: 0,
-    margin: "100px 0 0 10px",
+    margin: "100px 0 0 18px",
     width: "350px",
     color: theme.palette.primary.light,
   },
@@ -260,7 +260,7 @@ const Game = (props) => {
             <Typography variant="h4"></Typography>
           </CardHeader>
           <CardContent className={classes.capturedContainer}>
-            <Typography>
+            <Typography style={{ fontWeight: "900" }}>
               You can find the official rules{" "}
               <a
                 target="_blank"
@@ -274,21 +274,29 @@ const Game = (props) => {
             </Typography>
             <br />
             <br />
-            <Typography>
+            <Typography style={{ fontWeight: "900" }}>
               For this version, all you need to do is click the top to start,
               hover over the pieces, and drag the piece to a possible move,
               which will be shown as a smaller white indicator.
             </Typography>
-            <Typography>
+            <Typography style={{ fontWeight: "900" }}>
               You may also go back to the menu or reset the game.
             </Typography>
             <br />
             <br />
             <br />
-            <Button onClick={handleBack} className={classes.back}>
+            <Button
+              style={{ fontWeight: "900" }}
+              onClick={handleBack}
+              className={classes.back}
+            >
               Back
             </Button>
-            <Button onClick={handleReset} className={classes.reset}>
+            <Button
+              style={{ fontWeight: "900" }}
+              onClick={handleReset}
+              className={classes.reset}
+            >
               Reset
             </Button>
           </CardContent>
@@ -296,7 +304,7 @@ const Game = (props) => {
       </div>
       <div className={classes.dividerRight}></div>
       <div className={classes.rightDrawer}>
-        <Typography variant="h4">
+        <Typography style={{ fontWeight: "900" }} variant="h4">
           {whiteMove ? "It's grey's move" : "It's red's move"}
         </Typography>
         <Card className={classes.card}>
